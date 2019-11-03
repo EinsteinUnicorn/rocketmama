@@ -220,7 +220,9 @@ class PickupTable(object):
         self.hei = hei
 
 class WheelTable(PickupTable):
-    def __init__(self,xPos,yPos,wid,hei,):
+    def __init__(self,xPos,yPos,wid,hei,wheel):
+        super().__init__(x,y,wid,hei)
+        self.wheel = Wheel()
 class FuelTankTable(PickupTable):
 
 class EngineTable(PickupTable):
