@@ -2,12 +2,35 @@
 #player:
 #direction/ pick up/ drop off/ 
 #customer
+from cmu_112_graphics import *
+from tkinter import *
+from PIL import Image
+import random
+import copy
+
+class Aliens(object):
+    def __init__(self, alienNum, x, y, app):
+        self.app = app
+        self.alienNum = alienNum
+        self.spriteList = []
+        for i in range (1,7):
+            pngFile = Image.open(f'worker{i}.png')
+            self.spriteList.append(pngFile)
+        self.sprite = self.spriteList[self.alienNum-1]
+        self.x = x
+        self.y = y
+
+    def drawAlienWorker(self,canvas):
+        canvas.create_image(self.x,self.y,image=ImageTk.PhotoImage(self.sprite))
+        
+
+
 
 class Player(object):
     def __init__(self, playerNum, mode):
         self.mode = mode
         self.playerNum = playerNum
-        self.spriteList = [] #sprite list goes here
+        self.spriteList = [] #sprite list for players go here
         self.sprite = self.spriteList[self.playerNum-1]
         self.score = 0
         self.orderList = ['wheels', 'fuel tank True', 'engine', 'control panel', 'shell']
@@ -78,13 +101,13 @@ class Player(object):
             return True
         #collide bottom left
         elif (b >= (table.x - table.w) and\
-            a <= (table.x - table.w) and\
+            a <= (table.x - table.w)) and\
             (c <= (table.y + table.h) and\
             d >= (table.y + table.h)):
             return True
         #collide top left
         elif (b >= (table.x - table.w) and\
-            a <= (table.x - table.w) and\
+            a <= (table.x - table.w)) and\
             (c <= (table.y - table.h) and\
             d >= (table.y - table.h)):
             return True
@@ -95,7 +118,7 @@ class Player(object):
             d >= (table.y - table.h)):
             return True
         #collide bottom
-        elif ((a >= (table.x - table.w) and\
+        elif (a >= (table.x - table.w) and\
             b <= (table.x + table.w)) and\
             (c <= (table.y + table.h) and\
             d >= (table.y + table.h)):
@@ -119,8 +142,8 @@ class Player(object):
     def pickDrop(self,event):
         for table in self.tables:
             if (event.key == 'd' and tableInFront(table) and\
-                len(self.holding)>0 and (isinstance(table,Trash) or\
-                isinstance(table,MakerTable):
+                len(self.holding)>0) and (isinstance(table,Trash) or\
+                isinstance(table,MakerTable)):
                 item = self.holding.pop
                 if isinstance(table,MakerTable) and\
                     self.orderList[len(makerTable1.progress)]==str(item):
@@ -135,8 +158,6 @@ class Player(object):
                 self.holding.append(self.table.item)
             
             
-
-
     def tableInFront(self,table):
         a = self.x - self.charW
         b = self.x + self.charW
@@ -185,5 +206,36 @@ class MakerTable(ReceiveTable):
         self.progress = []
 
     
+
+
+
+
+#ModalApp
+class SplashScreenMode(Mode):
+    def redrawAll(mode,canvas):
+        canvas.create_text(mode.width/2, 200, text='This is a modal splash screen!')
+
+    #for now keyPressed, but should change to mouse Press or sth
+    def keyPressed(mode, event):
+        mode.app.setActiveMode(mode.app.gameMode)
+
+class GameMode(Mode):
+    def appStarted(mode):
+        mode.spriteCount = 0
+        mode.alien1 = Aliens(1,300,500,mode)
         
         
+    def timerFired(mode):
+        mode.spriteCount += 1
+
+    def redrawAll(mode,canvas):
+        mode.alien1.drawAlienWorker(canvas)
+
+
+class CookingRocket(ModalApp):
+    def appStarted(app):
+        app.splashScreenMode = SplashScreenMode()
+        app.gameMode = GameMode()
+        app.setActiveMode(app.splashScreenMode)
+
+CookingRocket(width=1320,height=870)
