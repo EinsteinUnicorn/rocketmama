@@ -42,7 +42,6 @@ class Rocket(object):
 class Wheels(object):
     def __init__(self, mode):
         self.mode = mode
-        pass
     def __repr__(self):
         return 'wheels'
     def draw(self, canvas):
@@ -100,3 +99,14 @@ class Shell(object):
         self.color = color
     def draw(self, canvas):
         pass
+
+class Table(object):
+    def __init__(self, app, x, y):
+        self.mode = app
+        self.x = x
+        self.y = y
+        self.table = self.mode.scaleImage(self.mode.loadImage('images/wheeltable'), 1/4)
+        
+    def draw (self, canvas):
+        canvas.create_image(self, self.x, self.y, Image=ImageTk.PhotoImage(self.table))
+    
