@@ -91,6 +91,9 @@ class Player(object):
     #this is a test method 
     def addItem(self, item):
         self.holding.append(item)
+    
+    def amtOfItems(self):
+        return len(self.holding)
 
     def isColliding(self, table):
         a = self.x - self.charW
