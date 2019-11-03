@@ -58,7 +58,7 @@ class Player(object):
             if self.x >= self.mode.width:
                 self.x -= 10
             for table in self.tables:
-                if isColliding(table):
+                if Player.isColliding(self,table):
                     self.x -= 10
             self.lastKey = 'Right'
             
@@ -67,7 +67,7 @@ class Player(object):
             if self.x <= 0:
                 self.x += 10
             for table in self.tables:
-                if isColliding(table):
+                if Player.isColliding(self,table):
                     self.x += 10
             self.lastKey = 'Left'
             
@@ -76,7 +76,7 @@ class Player(object):
             if self.y <= 0:
                 self.y += 10
             for table in self.tables:
-                if isColliding(table):
+                if Player.isColliding(self,table):
                     self.y += 10
             self.lastKey = 'Up'
                     
@@ -85,7 +85,7 @@ class Player(object):
             if self.y >= self.mode.height:
                 self.y -= 10
             for table in self.tables:
-                if isColliding(table):
+                if Player.isColliding(self,table):
                     self.y -= 10
             self.lastKey = 'Down'
 
@@ -96,52 +96,52 @@ class Player(object):
         c = self.y - self.charH
         d = self.y + self.charH
         #collide bottom right
-        if (a <= (table.x + table.w) and\
-            b >= (table.x + table.w)) and\
-            (c <= (table.y + table.h) and\
-            d >= (table.y + table.h)):
+        if (a <= (table.x + table.wid) and\
+            b >= (table.x + table.wid)) and\
+            (c <= (table.y + table.hei) and\
+            d >= (table.y + table.hei)):
             return True
         #collide top right
-        elif (a <= (table.x + table.w) and\
-            b >= (table.x + table.w)) and\
-            (c <= (table.y - table.h) and\
-            d >= (table.y - table.h)):
+        elif (a <= (table.x + table.wid) and\
+            b >= (table.x + table.wid)) and\
+            (c <= (table.y - table.hei) and\
+            d >= (table.y - table.hei)):
             return True
         #collide bottom left
-        elif (b >= (table.x - table.w) and\
-            a <= (table.x - table.w)) and\
-            (c <= (table.y + table.h) and\
-            d >= (table.y + table.h)):
+        elif (b >= (table.x - table.wid) and\
+            a <= (table.x - table.wid)) and\
+            (c <= (table.y + table.hei) and\
+            d >= (table.y + table.hei)):
             return True
         #collide top left
-        elif (b >= (table.x - table.w) and\
-            a <= (table.x - table.w)) and\
-            (c <= (table.y - table.h) and\
-            d >= (table.y - table.h)):
+        elif (b >= (table.x - table.wid) and\
+            a <= (table.x - table.wid)) and\
+            (c <= (table.y - table.hei) and\
+            d >= (table.y - table.hei)):
             return True
         #collide top
-        elif (a >= (table.x - table.w) and\
-            b <= (table.x + table.w)) and\
-            (c <= (table.y - table.h) and\
-            d >= (table.y - table.h)):
+        elif (a >= (table.x - table.wid) and\
+            b <= (table.x + table.wid)) and\
+            (c <= (table.y - table.hei) and\
+            d >= (table.y - table.hei)):
             return True
         #collide bottom
-        elif (a >= (table.x - table.w) and\
-            b <= (table.x + table.w)) and\
-            (c <= (table.y + table.h) and\
-            d >= (table.y + table.h)):
+        elif (a >= (table.x - table.wid) and\
+            b <= (table.x + table.wid)) and\
+            (c <= (table.y + table.hei) and\
+            d >= (table.y + table.hei)):
             return True
         #collide left
-        elif(a <= (table.x - table.w) and\
-            b >= (table.x - table.w)) and\
-            (c >= (table.y - table.h) and\
-            d <= (table.y + table.h)):
+        elif(a <= (table.x - table.wid) and\
+            b >= (table.x - table.wid)) and\
+            (c >= (table.y - table.hei) and\
+            d <= (table.y + table.hei)):
             return True
         #collide right
-        elif (a <= (table.x + table.w) and\
-            b >= (table.x + table.w)) and\
-            (c >= (table.y - table.h) and\
-            d <= (table.y + table.h)):
+        elif (a <= (table.x + table.wid) and\
+            b >= (table.x + table.wid)) and\
+            (c >= (table.y - table.hei) and\
+            d <= (table.y + table.hei)):
             return True
         else:
             return False
@@ -155,6 +155,7 @@ class Player(object):
                 if isinstance(table,MakerTable) and\
                     self.orderList[len(makerTable1.progress)]==str(item):
                     makerTable1.progress.append(item)
+                    print("dropped")
                 elif isinstance(table,MakerTable):
                     self.holding.append(item)
                     print("Can't drop here!")
@@ -163,6 +164,7 @@ class Player(object):
             elif (event.key == 'e' and tableInFront(table) and\
                 (isinstance(table,PickupTable) and len(self.holding)<2)):
                 self.holding.append(self.table.item)
+                print("picked up")
             
             
     def tableInFront(self,table):
@@ -172,28 +174,28 @@ class Player(object):
         d = self.y + self.charH
         
         if self.lastKey == 'Right' and\
-            (a <= (table.x + table.w) and\
-            b >= (table.x + table.w)) and\
-            (c >= (table.y - table.h) and\
-            d <= (table.y + table.h)):
+            (a <= (table.x + table.wid) and\
+            b >= (table.x + table.wid)) and\
+            (c >= (table.y - table.hei) and\
+            d <= (table.y + table.hei)):
             return True
         elif self.lastKey == 'Left' and\
-            (a <= (table.x - table.w) and\
-            b >= (table.x - table.w)) and\
-            (c >= (table.y - table.h) and\
-            d <= (table.y + table.h)):
+            (a <= (table.x - table.wid) and\
+            b >= (table.x - table.wid)) and\
+            (c >= (table.y - table.hei) and\
+            d <= (table.y + table.hei)):
             return True
         elif self.lastKey == 'Up' and\
-            (a >= (table.x - table.w) and\
-            b <= (table.x + table.w)) and\
-            (c <= (table.y + table.h) and\
-            d >= (table.y + table.h)):
+            (a >= (table.x - table.wid) and\
+            b <= (table.x + table.wid)) and\
+            (c <= (table.y + table.hei) and\
+            d >= (table.y + table.hei)):
             return True
         elif self.lastKey == 'Down' and\
-            (a >= (table.x - table.w) and\
-            b <= (table.x + table.w)) and\
-            (c <= (table.y - table.h) and\
-            d >= (table.y - table.h)):
+            (a >= (table.x - table.wid) and\
+            b <= (table.x + table.wid)) and\
+            (c <= (table.y - table.hei) and\
+            d >= (table.y - table.hei)):
             return True
 
 #Tables
@@ -413,23 +415,25 @@ class GameMode(Mode):
         mode.alien3 = Aliens(3,800,80,mode)
         mode.alien4 = Aliens(4,1200,300,mode)
         mode.alien5 = Aliens(5,1200,700,mode)
+        
+        #tables
+        mode.wheelTable = WheelTable(400,160,False,mode)
+        Table.addTable(Table,mode.wheelTable)
+        mode.makerTable = MakerTable(mode.width/2-50,mode.height/2-25,mode)
+
         #players
         mode.player1 = Player(1,mode)
         mode.player2 = Player(2,mode)
         mode.player3 = Player(3,mode)
         mode.player4 = Player(4,mode)
 
-        #tables
-        mode.wheelTable = WheelTable(400,160,False,mode)
-        Table.addTable(Table,mode.wheelTable)
-        mode.makerTable = MakerTable(mode.width/2-50,mode.height/2-25,mode)
-        
         
     def timerFired(mode):
         mode.spriteCount += 1
 
     def keyPressed(mode,event):
         Player.move(mode.player1,event)
+        Player.pickDrop(mode.player1,event)
         Player.move(mode.player2,event)
         Player.move(mode.player3,event)
         Player.move(mode.player4,event)
@@ -440,13 +444,13 @@ class GameMode(Mode):
         mode.alien3.drawAlienWorker(canvas)
         mode.alien4.drawAlienWorker(canvas)
         mode.alien5.drawAlienWorker(canvas)
-        
-        mode.player1.drawPlayers(canvas)
-        mode.player2.drawPlayers(canvas)
-        mode.player3.drawPlayers(canvas)
-        mode.player4.drawPlayers(canvas)
 
         mode.wheelTable.drawWheelTable(canvas)
+
+        mode.player1.drawPlayers(canvas)
+        #mode.player2.drawPlayers(canvas)
+        #mode.player3.drawPlayers(canvas)
+        #mode.player4.drawPlayers(canvas)
 
 
 class CookingRocket(ModalApp):
