@@ -44,7 +44,8 @@ class Player(object):
         self.charW = 8
         self.charH = 12
         #self.items = set([Wheel,Engine,ControlPanel,Shell,FuelTank])
-        self.tables = ReceiveTable() #table object class list?
+        table = Table()
+        self.tables = table.allTables
         self.lastKey = ''
     def drawPlayers(self,canvas):
         canvas.create_image(self.x,self.y,image=ImageTk.PhotoImage(self.sprite))
@@ -210,8 +211,47 @@ class MakerTable(ReceiveTable):
         super().__init__(x,y,wid,hei)
         self.progress = []
 
-    
 
+class PickupTable(object):
+    def __init__(self,xPos,yPos,wid,hei):
+        self.x = xPos
+        self.y = yPos
+        self.wid = wid
+        self.hei = hei
+
+class WheelTable(PickupTable):
+    def __init__(self,xPos,yPos,wid,hei,item):
+        super().__init__(x,y,wid,hei)
+        self.item = Wheel()
+        
+class FuelTankTable(PickupTable):
+    def __init__(self,xPos,yPos,wid,hei,item):
+        super().__init__(x,y,wid,hei)
+        self.item = FuelTank()
+        
+class EngineTable(PickupTable):
+    def __init__(self,xPos,yPos,wid,hei,item):
+        super().__init__(x,y,wid,hei)
+        self.item = Engine()
+
+class ControlPanelTable(PickupTable):
+    def __init__(self,xPos,yPos,wid,hei,item):
+        super().__init__(x,y,wid,hei)
+        self.item = ControlPanel()
+
+class ShellTable(PickupTable):
+    def __init__(self,xPos,yPos,wid,hei,item):
+        super().__init__(x,y,wid,hei)
+        self.item = Shell()
+
+class Table(object):
+    def __init__(self):
+        self.allTableTypes = set([WheelTable,FuelTankTable,EngineTable,
+                                  ControlPanelTable,ShellTable,Trash,MakerTable])
+        self.allTables = set()
+
+    def addTable(self,table):
+        self.allTables.add(table)
 
 
 
