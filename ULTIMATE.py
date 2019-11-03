@@ -236,14 +236,20 @@ class PickupTable(object):
 
 class WheelTable(PickupTable):
     def __init__(self,xPos,yPos,rotated,mode):
-        self.wid = super().wid
-        self.hei = super().hei
+        if rotated:
+            self.wid = super().hei
+            self.hei = super().wid
+        else:
+            self.wid = super().wid
+            self.hei = super().hei
         self.x = xPos
         self.y = yPos
         self.rotated = rotated
         self.item = Wheels(mode)
         image = Image.open('wheelTable.png')
         self.image = mode.scaleImage(image,1/3)
+        if self.rotated:
+            self.image = self.image.rotate(90)
 
     def __repr__(self):
         return 'WheelTable'
@@ -253,13 +259,21 @@ class WheelTable(PickupTable):
 
         
 class FuelTankTable(PickupTable):
-    def __init__(self,xPos,yPos,rotated,item,mode):
-        self.wid = super().wid
-        self.hei = super().hei
+    def __init__(self,xPos,yPos,rotated,mode):
+        if rotated:
+            self.wid = super().hei
+            self.hei = super().wid
+        else:
+            self.wid = super().wid
+            self.hei = super().hei
+        self.x = xPos
+        self.y = yPos
         self.rotated = rotated
         self.item = FuelTank(mode)
         image = Image.open('fuelTankTable.png')
-        self.image = mode.scaleImage(sprite,1/2)
+        self.image = mode.scaleImage(image,1/3)
+        if self.rotated:
+            self.image = self.image.rotate(90)
 
     def __repr__(self):
         return 'FuelTank'
@@ -269,13 +283,21 @@ class FuelTankTable(PickupTable):
 
         
 class EngineTable(PickupTable):
-    def __init__(self,xPos,yPos,rotated,item,mode):
-        self.wid = super().wid
-        self.hei = super().hei
+    def __init__(self,xPos,yPos,rotated,mode):
+        if rotated:
+            self.wid = super().hei
+            self.hei = super().wid
+        else:
+            self.wid = super().wid
+            self.hei = super().hei
+        self.x = xPos
+        self.y = yPos
         self.rotated = rotated
         self.item = Engine(mode)
         image = Image.open('engineTable.png')
-        self.image = mode.scaleImage(sprite,1/2)
+        self.image = mode.scaleImage(image,1/3)
+        if self.rotated:
+            self.image = self.image.rotate(90)
 
     def __repr__(self):
         return 'Engine'
@@ -284,13 +306,21 @@ class EngineTable(PickupTable):
         canvas.create_image(self.x,self.y,image=ImageTk.PhotoImage(self.image))
 
 class ControlPanelTable(PickupTable):
-    def __init__(self,xPos,yPos,rotated,item,mode):
-        self.wid = super().wid
-        self.hei = super().hei
+    def __init__(self,xPos,yPos,rotated,mode):
+        if rotated:
+            self.wid = super().hei
+            self.hei = super().wid
+        else:
+            self.wid = super().wid
+            self.hei = super().hei
+        self.x = xPos
+        self.y = yPos
         self.rotated = rotated
         self.item = ControlPanel(mode)
         image = Image.open('controlPanelTable.png')
-        self.image = mode.scaleImage(sprite,1/2)
+        self.image = mode.scaleImage(image,1/3)
+        if self.rotated:
+            self.image = self.image.rotate(90)
 
     def __repr__(self):
         return 'ControlPanel'
@@ -300,13 +330,21 @@ class ControlPanelTable(PickupTable):
 
 
 class ShellTable(PickupTable):
-    def __init__(self,xPos,yPos,rotated,item,mode):
-        self.wid = super().wid
-        self.hei = super().hei
+    def __init__(self,xPos,yPos,rotated,mode):
+        if rotated:
+            self.wid = super().hei
+            self.hei = super().wid
+        else:
+            self.wid = super().wid
+            self.hei = super().hei
+        self.x = xPos
+        self.y = yPos
         self.rotated = rotated
         self.item = Shell(mode)
         image = Image.open('shellTable.png')
-        self.image = mode.scaleImage(sprite,1/2)
+        self.image = mode.scaleImage(image,1/3)
+        if self.rotated:
+            self.image = self.image.rotate(90)
 
     def __repr__(self):
         return 'Shell'
@@ -488,7 +526,10 @@ class GameMode(Mode):
         #tables
         mode.wheelTable = WheelTable(400,160,False,mode)
         Table.addTable(Table,mode.wheelTable)
-        #mode.controlPanelTable = ControlPanelTable(
+        mode.controlPanelTable = ControlPanelTable(180,610,True,mode)
+        Table.addTable(Table,mode.controlPanelTable)
+        mode.fuelTankTable = FuelTankTable(1120,700,True,mode)
+        Table.addTable(Table,mode.fuelTankTable)
         
         mode.makerTable = MakerTable(mode.width/2-50,mode.height/2-25,mode)
 
@@ -497,6 +538,10 @@ class GameMode(Mode):
         mode.player2 = Player(2,mode)
         mode.player3 = Player(3,mode)
         mode.player4 = Player(4,mode)
+
+        #Order sheet
+        
+        #score sheet
 
         
     def timerFired(mode):
@@ -529,7 +574,9 @@ class GameMode(Mode):
 
         #tables
         mode.wheelTable.drawWheelTable(canvas)
-        mode.
+        mode.controlPanelTable.drawControlPanelTable(canvas)
+        mode.fuelTankTable.drawFuelTankTable(canvas)
+        
         
         #players
         mode.player1.drawPlayers(canvas)
