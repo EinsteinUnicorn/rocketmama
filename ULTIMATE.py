@@ -488,6 +488,7 @@ class GameMode(Mode):
         #tables
         mode.wheelTable = WheelTable(400,160,False,mode)
         Table.addTable(Table,mode.wheelTable)
+        mode.
         
         mode.makerTable = MakerTable(mode.width/2-50,mode.height/2-25,mode)
 
@@ -528,6 +529,7 @@ class GameMode(Mode):
 
         #tables
         mode.wheelTable.drawWheelTable(canvas)
+        mode.
         
         #players
         mode.player1.drawPlayers(canvas)
