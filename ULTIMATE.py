@@ -149,8 +149,7 @@ class Player(object):
     def pickDrop(self,event):
         for table in self.tables:
             if (event.key == 'd' and tableInFront(table) and\
-                len(self.holding)>0) and (isinstance(table,Trash) or\
-                isinstance(table,MakerTable)):
+                len(self.holding)>0) and (isinstance(table,ReceiveTable)):
                 item = self.holding.pop
                 if isinstance(table,MakerTable) and\
                     self.orderList[len(makerTable1.progress)]==str(item):
@@ -161,7 +160,7 @@ class Player(object):
                         
                 
             elif (event.key == 'e' and tableInFront(table) and\
-                len(self.holding)<2):
+                (isinstance(table,PickupTable) and len(self.holding)<2)):
                 self.holding.append(self.table.item)
             
             
