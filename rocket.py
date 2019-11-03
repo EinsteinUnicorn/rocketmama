@@ -1,11 +1,13 @@
 from cmu_112_graphics import *
 from tkinter import *
 from PIL import Image 
+from player_trash_makertable import *
 import random
 import copy
 
 class Rocket(object):
-    orderedItems = ['wheels', 'fuel tank True', 'engine', 'control panel', 'shell']
+    orderedItems = ['wheels True', 'fuel tank True', 'engine True', \
+        'control panel True', 'shell True']
     def __init__(self, mode):
         self.mode = mode
         self.items = []
@@ -40,14 +42,21 @@ class Rocket(object):
         pass
 
 class Wheels(object):
-    def __init__(self, mode):
-        self.mode = mode
-        pass
-    def __repr__(self):
-        return 'wheels'
-    def draw(self, canvas):
-        pass
+    def __init__(self, app, player):
+        self.mode = app
+        self.player = player
+        self.assembled = None #if this is None, this will not be draw 
+        self.wheel =self.mode.scaleImage(self.mode.loadImage('wheel.png'), 1/4)
 
+    def __repr__(self):
+        return f'wheels {self.assembled}'
+
+    def getWheel(self):
+        self.assembled = True
+         
+    def draw(self, canvas):
+        if 'wheels True' == self.player.inHand():
+            canvas.create_image(self.player.x, self.player.y,image=ImageTk.PhotoImage(self.wheel) )
 class FuelTank(object):
     def __init__(self,mode):
         self.mode = mode

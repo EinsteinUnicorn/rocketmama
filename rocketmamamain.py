@@ -27,8 +27,18 @@ class GameMode(Mode):
         #players
         mode.player1 = Player(1,mode)
         
+        #items -- This is a test
+        mode.wheel = Wheels(mode, mode.player1)
+        mode.wheel.getWheel()
+        mode.player1.addItem(mode.wheel)
+
+        
     def timerFired(mode):
         mode.spriteCount += 1
+    
+    def drawBackground(mode):
+        tileWidth = 60
+        pass
 
     def redrawAll(mode,canvas):
         mode.alien1.drawAlienWorker(canvas)
@@ -38,6 +48,7 @@ class GameMode(Mode):
         mode.alien5.drawAlienWorker(canvas)
         
         mode.player1.drawPlayers(canvas)
+        mode.wheel.draw(canvas)
 
 
 class CookingRocket(ModalApp):
