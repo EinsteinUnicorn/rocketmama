@@ -517,7 +517,7 @@ class GameMode(Mode):
                 mode.floor[row][col] = mode.tile
         
         #aliens
-        mode.alien1 = Aliens(1,100,600,mode)
+        mode.alien1 = Aliens(1,90,700,mode)
         mode.alien2 = Aliens(2,400,80,mode)
         mode.alien3 = Aliens(3,800,80,mode)
         mode.alien4 = Aliens(4,1200,300,mode)
@@ -526,7 +526,7 @@ class GameMode(Mode):
         #tables
         mode.wheelTable = WheelTable(400,160,False,mode)
         Table.addTable(Table,mode.wheelTable)
-        mode.controlPanelTable = ControlPanelTable(180,610,True,mode)
+        mode.controlPanelTable = ControlPanelTable(180,710,True,mode)
         Table.addTable(Table,mode.controlPanelTable)
         mode.fuelTankTable = FuelTankTable(1120,700,True,mode)
         Table.addTable(Table,mode.fuelTankTable)
