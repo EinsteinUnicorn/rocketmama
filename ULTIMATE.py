@@ -548,7 +548,11 @@ class SplashScreenMode(Mode):
 
 class GameMode(Mode):
     def appStarted(mode):
-        mode.spriteCount = 0
+        mode.numbers = []
+        for i in range(1,10):
+            mode.numbers.append(Image.open(f'{i}.png'))
+        mode.counter = 0
+        mode.timer = 200
         mode.margin = 5
         PickupTable()
         #floor
@@ -618,8 +622,16 @@ class GameMode(Mode):
         mode.score = mode.scaleImage(mode.score,1/2)
         
     def timerFired(mode):
-        mode.spriteCount += 1
+        mode.counter += 1
+        if mode.counter % 10 == 0:
+            mode.timer -= 1
+            if mode.timer == 0:
+                mode.app.setActiveMode(app.gameOverMode)
 
+    def drawTimer(mode,canvas):
+        
+        pass
+        
     def keyPressed(mode,event):
         Player.move(mode.player1,event)
         pickDrop(mode.player1,event)
@@ -637,6 +649,8 @@ class GameMode(Mode):
                 tile = mode.floor[row][col]
                 photoImage = getCachedPhotoImage(tile)
                 canvas.create_image(cx,cy,image=photoImage)
+        #timer
+        
         
         #workers
         mode.alien1.drawAlienWorker(canvas)
@@ -679,10 +693,16 @@ class GameMode(Mode):
         #score sheet
         canvas.create_image(130,440,image=ImageTk.PhotoImage(mode.score))
 
+class GameOverMode(Mode):
+    def redrawAll(mode,canvas):
+        canvas.create_text(mode.width/2,mode.height/2,text='Game Over!')
+
 class CookingRocket(ModalApp):
     def appStarted(app):
         app.splashScreenMode = SplashScreenMode()
         app.gameMode = GameMode()
+        app.gameOverMode = GameOverMode()
         app.setActiveMode(app.splashScreenMode)
+        
 
 CookingRocket(width=1320,height=870)
