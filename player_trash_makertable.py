@@ -17,6 +17,7 @@ class Aliens(object):
             pngFile = Image.open(f'worker{i}.png')
             self.spriteList.append(pngFile)
         self.sprite = self.spriteList[self.alienNum-1]
+        self.sprite = app.scaleImage(self.sprite,1/2)
         self.x = x
         self.y = y
 
@@ -30,7 +31,10 @@ class Player(object):
     def __init__(self, playerNum, mode):
         self.mode = mode
         self.playerNum = playerNum
-        self.spriteList = [] #sprite list for players go here
+        self.spriteList = []
+        for i in range (1,5):
+            pngFile = Image.open(f'player{i}.png')
+            self.spriteList.append(pngFile)
         self.sprite = self.spriteList[self.playerNum-1]
         self.score = 0
         self.orderList = ['wheels', 'fuel tank True', 'engine', 'control panel', 'shell']
@@ -39,10 +43,11 @@ class Player(object):
         self.y = mode.height//2
         self.charW = 8
         self.charH = 12
-        self.items = set([Wheel,Engine,ControlPanel,Shell,FuelTank])
-        self.tables = Tables() #table object class list?
+        #self.items = set([Wheel,Engine,ControlPanel,Shell,FuelTank])
+        self.tables = ReceiveTable() #table object class list?
         self.lastKey = ''
-        
+    def drawPlayers(self,canvas):
+        canvas.create_image(self.x,self.y,image=ImageTk.PhotoImage(self.sprite))
 
     def move(self,event):
         if (event.key == 'Right'):
@@ -222,14 +227,26 @@ class SplashScreenMode(Mode):
 class GameMode(Mode):
     def appStarted(mode):
         mode.spriteCount = 0
-        mode.alien1 = Aliens(1,300,500,mode)
-        
+        #aliens
+        mode.alien1 = Aliens(1,100,600,mode)
+        mode.alien2 = Aliens(2,400,100,mode)
+        mode.alien3 = Aliens(3,800,100,mode)
+        mode.alien4 = Aliens(4,1200,300,mode)
+        mode.alien5 = Aliens(5,1200,700,mode)
+        #players
+        mode.player1 = Player(1,mode)
         
     def timerFired(mode):
         mode.spriteCount += 1
 
     def redrawAll(mode,canvas):
         mode.alien1.drawAlienWorker(canvas)
+        mode.alien2.drawAlienWorker(canvas)
+        mode.alien3.drawAlienWorker(canvas)
+        mode.alien4.drawAlienWorker(canvas)
+        mode.alien5.drawAlienWorker(canvas)
+        
+        mode.player1.drawPlayers(canvas)
 
 
 class CookingRocket(ModalApp):
