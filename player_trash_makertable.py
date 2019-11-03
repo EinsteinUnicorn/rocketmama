@@ -44,7 +44,8 @@ class Player(object):
         self.charW = 8
         self.charH = 12
         #self.items = set([Wheel,Engine,ControlPanel,Shell,FuelTank])
-        self.tables = ReceiveTable() #table object class list?
+        table = Table()
+        self.tables = table.allTables
         self.lastKey = ''
     def drawPlayers(self,canvas):
         canvas.create_image(self.x,self.y,image=ImageTk.PhotoImage(self.sprite))
@@ -210,4 +211,88 @@ class MakerTable(ReceiveTable):
         super().__init__(x,y,wid,hei)
         self.progress = []
 
-    
+
+class PickupTable(object):
+    def __init__(self,xPos,yPos,wid,hei):
+        self.x = xPos
+        self.y = yPos
+        self.wid = wid
+        self.hei = hei
+
+class WheelTable(PickupTable):
+    def __init__(self,xPos,yPos,wid,hei,item):
+        super().__init__(x,y,wid,hei)
+        self.item = Wheel()
+        
+class FuelTankTable(PickupTable):
+    def __init__(self,xPos,yPos,wid,hei,item):
+        super().__init__(x,y,wid,hei)
+        self.item = FuelTank()
+        
+class EngineTable(PickupTable):
+    def __init__(self,xPos,yPos,wid,hei,item):
+        super().__init__(x,y,wid,hei)
+        self.item = Engine()
+
+class ControlPanelTable(PickupTable):
+    def __init__(self,xPos,yPos,wid,hei,item):
+        super().__init__(x,y,wid,hei)
+        self.item = ControlPanel()
+
+class ShellTable(PickupTable):
+    def __init__(self,xPos,yPos,wid,hei,item):
+        super().__init__(x,y,wid,hei)
+        self.item = Shell()
+
+class Table(object):
+    def __init__(self):
+        self.allTableTypes = set([WheelTable,FuelTankTable,EngineTable,
+                                  ControlPanelTable,ShellTable,Trash,MakerTable])
+        self.allTables = set()
+
+    def addTable(self,table):
+        self.allTables.add(table)
+
+
+
+#ModalApp
+class SplashScreenMode(Mode):
+    def redrawAll(mode,canvas):
+        canvas.create_text(mode.width/2, 200, text='This is a modal splash screen!')
+
+    #for now keyPressed, but should change to mouse Press or sth
+    def keyPressed(mode, event):
+        mode.app.setActiveMode(mode.app.gameMode)
+
+class GameMode(Mode):
+    def appStarted(mode):
+        mode.spriteCount = 0
+        #aliens
+        mode.alien1 = Aliens(1,100,600,mode)
+        mode.alien2 = Aliens(2,400,100,mode)
+        mode.alien3 = Aliens(3,800,100,mode)
+        mode.alien4 = Aliens(4,1200,300,mode)
+        mode.alien5 = Aliens(5,1200,700,mode)
+        #players
+        mode.player1 = Player(1,mode)
+        
+    def timerFired(mode):
+        mode.spriteCount += 1
+
+    def redrawAll(mode,canvas):
+        mode.alien1.drawAlienWorker(canvas)
+        mode.alien2.drawAlienWorker(canvas)
+        mode.alien3.drawAlienWorker(canvas)
+        mode.alien4.drawAlienWorker(canvas)
+        mode.alien5.drawAlienWorker(canvas)
+        
+        mode.player1.drawPlayers(canvas)
+
+
+class CookingRocket(ModalApp):
+    def appStarted(app):
+        app.splashScreenMode = SplashScreenMode()
+        app.gameMode = GameMode()
+        app.setActiveMode(app.splashScreenMode)
+
+CookingRocket(width=1320,height=870)
