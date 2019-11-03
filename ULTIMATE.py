@@ -1,6 +1,6 @@
 #Ashley
 #player:
-#direction/ pick up/ drop off/ 
+#direction/ pick up/ drop off/
 #customer
 from cmu_112_graphics import *
 from tkinter import *
@@ -24,7 +24,7 @@ class Aliens(object):
 
     def drawAlienWorker(self,canvas):
         canvas.create_image(self.x,self.y,image=ImageTk.PhotoImage(self.sprite))
-        
+
 
 
 
@@ -45,7 +45,8 @@ class Player(object):
         self.charW = 8
         self.charH = 12
         #self.items = set([Wheel,Engine,ControlPanel,Shell,FuelTank])
-        self.tables = ReceiveTable() #table object class list?
+        table = Table()
+        self.tables = table.allTables
         self.lastKey = ''
     def drawPlayers(self,canvas):
         canvas.create_image(self.x,self.y,image=ImageTk.PhotoImage(self.sprite))
@@ -59,7 +60,7 @@ class Player(object):
                 if isColliding(table):
                     self.x -= 10
             self.lastKey = 'Right'
-            
+
         elif (event.key == 'Left'):
             self.x -= 10
             if self.x <= 0:
@@ -68,7 +69,7 @@ class Player(object):
                 if isColliding(table):
                     self.x += 10
             self.lastKey = 'Left'
-            
+
         elif (event.key == 'Up'):
             self.y -= 10
             if self.y <= 0:
@@ -77,7 +78,7 @@ class Player(object):
                 if isColliding(table):
                     self.y += 10
             self.lastKey = 'Up'
-                    
+
         elif (event.key == 'Down'):
             self.y += 10
             if self.y >= mode.height:
@@ -87,7 +88,7 @@ class Player(object):
                     self.y -= 10
             self.lastKey = 'Down'
 
-            
+
     def isColliding(self, table):
         a = self.x - self.charW
         b = self.x + self.charW
@@ -143,7 +144,7 @@ class Player(object):
             return True
         else:
             return False
-        
+
 
     def pickDrop(self,event):
         for table in self.tables:
@@ -157,19 +158,19 @@ class Player(object):
                 elif isinstance(table,MakerTable):
                     self.holding.append(item)
                     print("Can't drop here!")
-                        
-                
+
+
             elif (event.key == 'e' and tableInFront(table) and\
                 len(self.holding)<2):
                 self.holding.append(self.table.item)
-            
-            
+
+
     def tableInFront(self,table):
         a = self.x - self.charW
         b = self.x + self.charW
         c = self.y - self.charH
         d = self.y + self.charH
-        
+
         if self.lastKey == 'Right' and\
             (a <= (table.x + table.w) and\
             b >= (table.x + table.w)) and\
@@ -220,20 +221,42 @@ class PickupTable(object):
         self.hei = hei
 
 class WheelTable(PickupTable):
-    def __init__(self,xPos,yPos,wid,hei,wheel):
+    def __init__(self,xPos,yPos,wid,hei,item):
         super().__init__(x,y,wid,hei)
-        self.wheel = Wheel()
+        self.item = Wheel()
 
 class FuelTankTable(PickupTable):
+    def __init__(self,xPos,yPos,wid,hei,item):
+        super().__init__(x,y,wid,hei)
+        self.item = FuelTank()
 
 class EngineTable(PickupTable):
+    def __init__(self,xPos,yPos,wid,hei,item):
+        super().__init__(x,y,wid,hei)
+        self.item = Engine()
 
 class ControlPanelTable(PickupTable):
+    def __init__(self,xPos,yPos,wid,hei,item):
+        super().__init__(x,y,wid,hei)
+        self.item = ControlPanel()
 
 class ShellTable(PickupTable):
-        
+    def __init__(self,xPos,yPos,wid,hei,item):
+        super().__init__(x,y,wid,hei)
+        self.item = Shell()
 
-    
+class Table(object):
+    def __init__(self):
+        self.allTableTypes = set([WheelTable,FuelTankTable,EngineTable,
+                                  ControlPanelTable,ShellTable,Trash,MakerTable])
+        self.allTables = set()
+
+    def addTable(self,table):
+        self.allTables.add(table)
+
+
+
+
 
 
 #MAKING
@@ -260,7 +283,7 @@ class Rocket(object):
         tempList = []
         for item in self.items:
             tempList.append(str(item))
-        return Rocket.orderedItems ==  tempList     
+        return Rocket.orderedItems ==  tempList
 
     def draw(self, canvas):
         assembled = checkAssembly()
@@ -269,7 +292,7 @@ class Rocket(object):
             pass
         else:
             #draw the semi-assembled robot
-            pass 
+            pass
         pass
 
 class Wheels(object):
@@ -334,7 +357,7 @@ class Shell(object):
     def draw(self, canvas):
         pass
 
-    
+
 
 
 
@@ -359,7 +382,7 @@ class GameMode(Mode):
         mode.alien5 = Aliens(5,1200,700,mode)
         #players
         mode.player1 = Player(1,mode)
-        
+
     def timerFired(mode):
         mode.spriteCount += 1
 
@@ -369,7 +392,7 @@ class GameMode(Mode):
         mode.alien3.drawAlienWorker(canvas)
         mode.alien4.drawAlienWorker(canvas)
         mode.alien5.drawAlienWorker(canvas)
-        
+
         mode.player1.drawPlayers(canvas)
 
 
