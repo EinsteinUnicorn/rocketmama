@@ -181,9 +181,6 @@ class Player(object):
 def pickDrop(player,event):
     for table in Table().allTables:
         if (event.key == 'd'):
-            print('d pressed')
-            print(Player.tableInFront(player,table))
-            print(player.lastKey)
             if Player.tableInFront(player,table) and\
                 len(player.holding)>0 and (isinstance(table,ReceiveTable)):
                 item = player.holding.pop
@@ -196,7 +193,6 @@ def pickDrop(player,event):
                     print("Can't drop here!")
                         
         elif (event.key == 'e'):
-            print('e pressed')
             if Player.tableInFront(player,table) and\
                 (isinstance(table,PickupTable) and len(player.holding)<2):
                 player.holding.append(player.table.item)
@@ -384,6 +380,11 @@ class ColorStation(object):
     def drawColorStation(self,canvas):
         canvas.create_image(self.x,self.y,image=ImageTk.PhotoImage(self.image))
 
+    def visitColorStation(self,player,event):
+        if isinstance(player.holding[0],Shell) and player.holding[0].color == None:
+            player.holding[0].selectColor('red')
+
+
 class WireStation(object):
     def __init__(self,xPos,yPos,mode):
         self.x = xPos
@@ -491,7 +492,6 @@ class Engine(object):
             #draw a square
             pass
 
-    
 
 class ControlPanel(object):
     def __init__(self, mode):
@@ -500,6 +500,7 @@ class ControlPanel(object):
     def wire(self):
         if self.wired == False:
             print('wired!')
+            self.wired = True
         else:
             print("I'm already wired")
 
@@ -549,7 +550,7 @@ class SplashScreenMode(Mode):
 class GameMode(Mode):
     def appStarted(mode):
         mode.numbers = []
-        for i in range(1,10):
+        for i in range(0,10):
             mode.numbers.append(Image.open(f'{i}.png'))
         mode.counter = 0
         mode.timer = 200
@@ -611,8 +612,8 @@ class GameMode(Mode):
         #players
         mode.player1 = Player(1,560,300,mode)
         mode.player2 = Player(2,740,300,mode)
-        mode.player3 = Player(3,560,560,mode)
-        mode.player4 = Player(4,740,560,mode)
+        mode.player3 = Player(3,560,600,mode)
+        mode.player4 = Player(4,740,600,mode)
 
         #Order sheet
         mode.order = Image.open('orderSheet.png')
@@ -626,11 +627,35 @@ class GameMode(Mode):
         if mode.counter % 10 == 0:
             mode.timer -= 1
             if mode.timer == 0:
-                mode.app.setActiveMode(app.gameOverMode)
+                mode.app.setActiveMode(mode.app.gameOverMode)
+
+    def drawScore(mode,canvas):
+        a = mode.player1.score
+        canvas.create_image(120,460,\
+                    image=ImageTk.PhotoImage(mode.scaleImage(mode.numbers[a],1/3)))
+        canvas.create_image(150,460,\
+                    image=ImageTk.PhotoImage(mode.scaleImage(mode.numbers[0],1/3)))
+        canvas.create_image(180,460,\
+                    image=ImageTk.PhotoImage(mode.scaleImage(mode.numbers[0],1/3)))
+
 
     def drawTimer(mode,canvas):
+        a = mode.timer//100
+        if a == 0:
+            a = 0
+        b = mode.timer%100//10
+        if b == 0 and a == 0:
+            b = 0
+        c = mode.timer%10
+        canvas.create_image(mode.width-120,70,\
+                            image=ImageTk.PhotoImage(mode.numbers[a]))
+        canvas.create_image(mode.width-80,70,\
+                            image=ImageTk.PhotoImage(mode.numbers[b]))
+        canvas.create_image(mode.width-40,70,\
+                            image=ImageTk.PhotoImage(mode.numbers[c]))
         
         pass
+        
         
     def keyPressed(mode,event):
         Player.move(mode.player1,event)
@@ -649,8 +674,6 @@ class GameMode(Mode):
                 tile = mode.floor[row][col]
                 photoImage = getCachedPhotoImage(tile)
                 canvas.create_image(cx,cy,image=photoImage)
-        #timer
-        
         
         #workers
         mode.alien1.drawAlienWorker(canvas)
@@ -687,11 +710,15 @@ class GameMode(Mode):
         mode.player3.drawPlayers(canvas)
         mode.player4.drawPlayers(canvas)
 
+        #timer
+        mode.drawTimer(canvas)
 
         #order sheet
         canvas.create_image(160,200,image=ImageTk.PhotoImage(mode.order))
         #score sheet
         canvas.create_image(130,440,image=ImageTk.PhotoImage(mode.score))
+        #score
+        mode.drawScore(canvas)
 
 class GameOverMode(Mode):
     def redrawAll(mode,canvas):
