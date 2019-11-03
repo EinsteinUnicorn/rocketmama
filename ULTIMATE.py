@@ -10,15 +10,15 @@ import copy
 
 #MAKERS
 class Aliens(object):
-    def __init__(self, alienNum, x, y, app):
-        self.app = app
+    def __init__(self, alienNum, x, y, mode):
+        self.mode = mode
         self.alienNum = alienNum
         self.spriteList = []
         for i in range (1,7):
             pngFile = Image.open(f'worker{i}.png')
             self.spriteList.append(pngFile)
         self.sprite = self.spriteList[self.alienNum-1]
-        self.sprite = app.scaleImage(self.sprite,1/2)
+        self.sprite = mode.scaleImage(self.sprite,1/2)
         self.x = x
         self.y = y
 
@@ -36,7 +36,8 @@ class Player(object):
         for i in range (1,5):
             pngFile = Image.open(f'player{i}.png')
             self.spriteList.append(pngFile)
-        self.sprite = self.spriteList[self.playerNum-1]
+        sprite = self.spriteList[self.playerNum-1]
+        self.sprite = mode.scaleImage(sprite,1/2)
         self.score = 0
         self.orderList = ['wheels', 'fuel tank True', 'engine', 'control panel', 'shell']
         self.holding = []
@@ -54,7 +55,7 @@ class Player(object):
     def move(self,event):
         if (event.key == 'Right'):
             self.x += 10
-            if self.x >= mode.width:
+            if self.x >= self.mode.width:
                 self.x -= 10
             for table in self.tables:
                 if isColliding(table):
@@ -81,7 +82,7 @@ class Player(object):
                     
         elif (event.key == 'Down'):
             self.y += 10
-            if self.y >= mode.height:
+            if self.y >= self.mode.height:
                 self.y -= 10
             for table in self.tables:
                 if isColliding(table):
@@ -197,58 +198,90 @@ class Player(object):
 
 #Tables
 class ReceiveTable(object):
-    def __init__(self,xPos,yPos,wid,hei):
-        self.x = xPos
-        self.y = yPos
-        self.wid = wid
-        self.hei = hei
+    wid = 100
+    hei = 50
 
 class Trash(ReceiveTable):
+    def __init__(self,xPos,yPos,mode):
+        self.wid = super().wid
+        self.hei = super().hei
+        self.x = xPos
+        self.y = yPos
     pass
 
 class MakerTable(ReceiveTable):
-    def __init__(self,xPos,yPos,wid,hei):
-        super().__init__(x,y,wid,hei)
+    def __init__(self,xPos,yPos,mode):
+        self.wid = super().wid
+        self.hei = super().hei
+        self.x = xPos
+        self.y = yPos
         self.progress = []
+        self.image = Image.open('makerTable.png')
+        self.image = mode.scaleImage(self.image,1/2)
+        
+    def drawMakerTable(self,canvas):
+        canvas.create_image(self.x,self.y,image=ImageTk.PhotoImage(self.image))
 
 
 class PickupTable(object):
-    def __init__(self,xPos,yPos,wid,hei):
-        self.x = xPos
-        self.y = yPos
-        self.wid = wid
-        self.hei = hei
+    wid = 100
+    hei = 50
 
 class WheelTable(PickupTable):
-    def __init__(self,xPos,yPos,wid,hei,item):
-        super().__init__(x,y,wid,hei)
-        self.item = Wheel()
+    def __init__(self,xPos,yPos,rotated,mode):
+        self.wid = super().wid
+        self.hei = super().hei
+        self.x = xPos
+        self.y = yPos
+        self.rotated = rotated
+        self.item = Wheels(mode)
+        image = Image.open('wheelTable.png')
+        self.image = mode.scaleImage(image,1/3)
+
+    def drawWheelTable(self,canvas):
+        canvas.create_image(self.x,self.y,image=ImageTk.PhotoImage(self.image))
+
         
 class FuelTankTable(PickupTable):
-    def __init__(self,xPos,yPos,wid,hei,item):
-        super().__init__(x,y,wid,hei)
-        self.item = FuelTank()
+    def __init__(self,xPos,yPos,rotated,item,mode):
+        self.wid = super().wid
+        self.hei = super().hei
+        self.rotated = rotated
+        self.item = FuelTank(mode)
+        sprite = Image.open('fuelTankTable.png')
+        self.sprite = mode.scaleImage(sprite,1/2)
         
 class EngineTable(PickupTable):
-    def __init__(self,xPos,yPos,wid,hei,item):
-        super().__init__(x,y,wid,hei)
-        self.item = Engine()
+    def __init__(self,xPos,yPos,rotated,item,mode):
+        self.wid = super().wid
+        self.hei = super().hei
+        self.rotated = rotated
+        self.item = Engine(mode)
+        sprite = Image.open('engineTable.png')
+        self.sprite = mode.scaleImage(sprite,1/2)
 
 class ControlPanelTable(PickupTable):
-    def __init__(self,xPos,yPos,wid,hei,item):
-        super().__init__(x,y,wid,hei)
-        self.item = ControlPanel()
+    def __init__(self,xPos,yPos,rotated,item,mode):
+        self.wid = super().wid
+        self.hei = super().hei
+        self.rotated = rotated
+        self.item = ControlPanel(mode)
+        sprite = Image.open('controlPanelTable.png')
+        self.sprite = mode.scaleImage(sprite,1/2)
 
 class ShellTable(PickupTable):
-    def __init__(self,xPos,yPos,wid,hei,item):
-        super().__init__(x,y,wid,hei)
-        self.item = Shell()
+    def __init__(self,xPos,yPos,rotated,item,mode):
+        self.wid = super().wid
+        self.hei = super().hei
+        self.rotated = rotated
+        self.item = Shell(mode)
+        sprite = Image.open('shellTable.png')
+        self.sprite = mode.scaleImage(sprite,1/2)
 
 class Table(object):
-    def __init__(self):
-        self.allTableTypes = set([WheelTable,FuelTankTable,EngineTable,
+    allTableTypes = set([WheelTable,FuelTankTable,EngineTable,
                                   ControlPanelTable,ShellTable,Trash,MakerTable])
-        self.allTables = set()
+    allTables = set()
 
     def addTable(self,table):
         self.allTables.add(table)
@@ -373,17 +406,33 @@ class SplashScreenMode(Mode):
 class GameMode(Mode):
     def appStarted(mode):
         mode.spriteCount = 0
+        PickupTable()
         #aliens
         mode.alien1 = Aliens(1,100,600,mode)
-        mode.alien2 = Aliens(2,400,100,mode)
-        mode.alien3 = Aliens(3,800,100,mode)
+        mode.alien2 = Aliens(2,400,80,mode)
+        mode.alien3 = Aliens(3,800,80,mode)
         mode.alien4 = Aliens(4,1200,300,mode)
         mode.alien5 = Aliens(5,1200,700,mode)
         #players
         mode.player1 = Player(1,mode)
+        mode.player2 = Player(2,mode)
+        mode.player3 = Player(3,mode)
+        mode.player4 = Player(4,mode)
+
+        #tables
+        mode.wheelTable = WheelTable(400,160,False,mode)
+        Table.addTable(Table,mode.wheelTable)
+        mode.makerTable = MakerTable(mode.width/2-50,mode.height/2-25,mode)
+        
         
     def timerFired(mode):
         mode.spriteCount += 1
+
+    def keyPressed(mode,event):
+        Player.move(mode.player1,event)
+        Player.move(mode.player2,event)
+        Player.move(mode.player3,event)
+        Player.move(mode.player4,event)
 
     def redrawAll(mode,canvas):
         mode.alien1.drawAlienWorker(canvas)
@@ -393,6 +442,11 @@ class GameMode(Mode):
         mode.alien5.drawAlienWorker(canvas)
         
         mode.player1.drawPlayers(canvas)
+        mode.player2.drawPlayers(canvas)
+        mode.player3.drawPlayers(canvas)
+        mode.player4.drawPlayers(canvas)
+
+        mode.wheelTable.drawWheelTable(canvas)
 
 
 class CookingRocket(ModalApp):
