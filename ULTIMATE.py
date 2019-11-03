@@ -1,6 +1,6 @@
 #Ashley
 #player:
-#direction/ pick up/ drop off/
+#direction/ pick up/ drop off/ 
 #customer
 from cmu_112_graphics import *
 from tkinter import *
@@ -24,7 +24,7 @@ class Aliens(object):
 
     def drawAlienWorker(self,canvas):
         canvas.create_image(self.x,self.y,image=ImageTk.PhotoImage(self.sprite))
-
+        
 
 
 
@@ -61,7 +61,7 @@ class Player(object):
                 if Player.isColliding(self,table):
                     self.x -= 10
             self.lastKey = 'Right'
-
+            
         elif (event.key == 'Left'):
             self.x -= 10
             if self.x <= 0:
@@ -70,7 +70,7 @@ class Player(object):
                 if Player.isColliding(self,table):
                     self.x += 10
             self.lastKey = 'Left'
-
+            
         elif (event.key == 'Up'):
             self.y -= 10
             if self.y <= 0:
@@ -79,7 +79,7 @@ class Player(object):
                 if Player.isColliding(self,table):
                     self.y += 10
             self.lastKey = 'Up'
-
+                    
         elif (event.key == 'Down'):
             self.y += 10
             if self.y >= self.mode.height:
@@ -89,7 +89,7 @@ class Player(object):
                     self.y -= 10
             self.lastKey = 'Down'
 
-
+            
     def isColliding(self, table):
         a = self.x - self.charW
         b = self.x + self.charW
@@ -145,13 +145,13 @@ class Player(object):
             return True
         else:
             return False
-
+            
     def tableInFront(self,table):
         a = self.x - self.charW
         b = self.x + self.charW
         c = self.y - self.charH
         d = self.y + self.charH
-
+        
         if self.lastKey == 'Right' and\
             (a <= (table.x + table.wid) and\
             b >= (table.x + table.wid)) and\
@@ -194,7 +194,7 @@ def pickDrop(player,event):
                 elif isinstance(table,MakerTable):
                     player.holding.append(item)
                     print("Can't drop here!")
-
+                        
         elif (event.key == 'e'):
             print('e pressed')
             if Player.tableInFront(player,table) and\
@@ -216,8 +216,8 @@ class Trash(ReceiveTable):
         self.y = yPos
         image = Image.open('Trashcan.png')
         self.image = mode.scaleImage(image,1/3)
-
-
+        
+        
     def drawTrash(self,canvas):
         canvas.create_image(self.x,self.y,image=ImageTk.PhotoImage(self.image))
 
@@ -231,7 +231,7 @@ class MakerTable(ReceiveTable):
         self.progress = []
         self.image = Image.open('makerTable.png')
         self.image = mode.scaleImage(self.image,1/3)
-
+        
     def drawMakerTable(self,canvas):
         canvas.create_image(self.x,self.y,image=ImageTk.PhotoImage(self.image))
 
@@ -263,7 +263,7 @@ class WheelTable(PickupTable):
     def drawWheelTable(self,canvas):
         canvas.create_image(self.x,self.y,image=ImageTk.PhotoImage(self.image))
 
-
+        
 class FuelTankTable(PickupTable):
     def __init__(self,xPos,yPos,rotated,mode):
         if rotated:
@@ -287,7 +287,7 @@ class FuelTankTable(PickupTable):
     def drawFuelTankTable(self,canvas):
         canvas.create_image(self.x,self.y,image=ImageTk.PhotoImage(self.image))
 
-
+        
 class EngineTable(PickupTable):
     def __init__(self,xPos,yPos,rotated,mode):
         if rotated:
@@ -310,8 +310,8 @@ class EngineTable(PickupTable):
 
     def drawEngineTable(self,canvas):
         canvas.create_image(self.x,self.y,image=ImageTk.PhotoImage(self.image))
-
-
+        
+    
 class ControlPanelTable(PickupTable):
     def __init__(self,xPos,yPos,rotated,mode):
         if rotated:
@@ -407,9 +407,9 @@ class Table(object):
     def __repr__(self):
         return Table.allTables
 
+        
 
-
-
+    
 
 
 #MAKING
@@ -436,7 +436,7 @@ class Rocket(object):
         tempList = []
         for item in self.items:
             tempList.append(str(item))
-        return Rocket.orderedItems ==  tempList
+        return Rocket.orderedItems ==  tempList     
 
     def draw(self, canvas):
         assembled = checkAssembly()
@@ -445,7 +445,7 @@ class Rocket(object):
             pass
         else:
             #draw the semi-assembled robot
-            pass
+            pass 
         pass
 
 class Wheels(object):
@@ -491,7 +491,7 @@ class Engine(object):
             #draw a square
             pass
 
-
+    
 
 class ControlPanel(object):
     def __init__(self, mode):
@@ -512,10 +512,10 @@ class Shell(object):
     def draw(self, canvas):
         pass
 
-
+    
 #other helper fx:
 #from http://www.cs.cmu.edu/~112/notes/notes-animations-part2.html#cachingPhotoImages
-#CachingPhotoImage for increased speed section
+#CachingPhotoImage for increased speed section   
 def make2dList(rows, cols):
     return [ ([0] * cols) for row in range(rows) ]
 
@@ -564,14 +564,14 @@ class GameMode(Mode):
         for row in range(mode.rows):
             for col in range(mode.cols):
                 mode.floor[row][col] = mode.tile
-
+        
         #aliens
         mode.alien1 = Aliens(1,90,700,mode)
         mode.alien2 = Aliens(2,400,80,mode)
         mode.alien3 = Aliens(3,800,80,mode)
         mode.alien4 = Aliens(4,1200,300,mode)
         mode.alien5 = Aliens(5,1200,700,mode)
-
+        
         #tables
         mode.wheelTable = WheelTable(400,160,False,mode)
         Table.addTable(Table,mode.wheelTable)
@@ -583,7 +583,7 @@ class GameMode(Mode):
         Table.addTable(Table,mode.engineTable)
         mode.shellTable = ShellTable(1120,300,True,mode)
         Table.addTable(Table,mode.shellTable)
-
+        
 
         mode.trash1 = Trash(350,800,mode)
         Table.addTable(Table,mode.trash1)
@@ -592,13 +592,13 @@ class GameMode(Mode):
 
         mode.fuelStation = FuelStation(500,800,mode)
         Table.addTable(Table,mode.fuelStation)
-
+            
         mode.colorStation = ColorStation(670,800,mode)
         Table.addTable(Table,mode.colorStation)
-
+        
         mode.wireStation = WireStation(840,800,mode)
         Table.addTable(Table,mode.wireStation)
-
+        
         mode.makerTable1 = MakerTable(560,405,mode)
         Table.addTable(Table,mode.makerTable1)
         mode.makerTable2 = MakerTable(740,405,mode)
@@ -616,11 +616,11 @@ class GameMode(Mode):
 
         #Order sheet
         mode.order = Image.open('orderSheet.png')
-
+        
         #score sheet
         mode.score = Image.open('scoreSheet.png')
         mode.score = mode.scaleImage(mode.score,1/2)
-
+        
     def timerFired(mode):
         mode.counter += 1
         if mode.counter % 10 == 0:
@@ -629,16 +629,16 @@ class GameMode(Mode):
                 mode.app.setActiveMode(app.gameOverMode)
 
     def drawTimer(mode,canvas):
-
+        
         pass
-
+        
     def keyPressed(mode,event):
         Player.move(mode.player1,event)
         pickDrop(mode.player1,event)
         Player.move(mode.player2,event)
         Player.move(mode.player3,event)
         Player.move(mode.player4,event)
-
+        
 
     def redrawAll(mode,canvas):
         #floor
@@ -650,8 +650,8 @@ class GameMode(Mode):
                 photoImage = getCachedPhotoImage(tile)
                 canvas.create_image(cx,cy,image=photoImage)
         #timer
-
-
+        
+        
         #workers
         mode.alien1.drawAlienWorker(canvas)
         mode.alien2.drawAlienWorker(canvas)
@@ -679,8 +679,8 @@ class GameMode(Mode):
         mode.makerTable2.drawMakerTable(canvas)
         mode.makerTable3.drawMakerTable(canvas)
         mode.makerTable4.drawMakerTable(canvas)
-
-
+        
+        
         #players
         mode.player1.drawPlayers(canvas)
         mode.player2.drawPlayers(canvas)
@@ -703,6 +703,6 @@ class CookingRocket(ModalApp):
         app.gameMode = GameMode()
         app.gameOverMode = GameOverMode()
         app.setActiveMode(app.splashScreenMode)
-
+        
 
 CookingRocket(width=1320,height=870)
