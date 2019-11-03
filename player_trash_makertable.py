@@ -10,7 +10,7 @@ class Player(object):
         self.spriteList = [] #sprite list goes here
         self.sprite = self.spriteList[self.playerNum-1]
         self.score = 0
-        self.orderList = []
+        self.orderList = ['wheels', 'fuel tank True', 'engine', 'control panel', 'shell']
         self.holding = []
         self.x = mode.width//2
         self.y = mode.height//2
@@ -122,8 +122,13 @@ class Player(object):
                 len(self.holding)>0 and (isinstance(table,Trash) or\
                 isinstance(table,MakerTable):
                 item = self.holding.pop
-                if isinstance(table,MakerTable):
-                    MakerTable1.progress
+                if isinstance(table,MakerTable) and\
+                    self.orderList[len(makerTable1.progress)]==str(item):
+                    makerTable1.progress.append(item)
+                elif isinstance(table,MakerTable):
+                    self.holding.append(item)
+                    print("Can't drop here!")
+                        
                 
             elif (event.key == 'e' and tableInFront(table) and\
                 len(self.holding)<2):
@@ -178,7 +183,6 @@ class MakerTable(ReceiveTable):
     def __init__(self,xPos,yPos,wid,hei):
         super().__init__(x,y,wid,hei)
         self.progress = []
-
 
     
         
