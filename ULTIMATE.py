@@ -195,7 +195,7 @@ def pickDrop(player,event):
         elif (event.key == 'e'):
             if Player.tableInFront(player,table) and\
                 (isinstance(table,PickupTable) and len(player.holding)<2):
-                player.holding.append(player.table.item)
+                player.holding.append(table.item)
                 print("picked up")
 
 
@@ -721,9 +721,15 @@ class GameMode(Mode):
         mode.drawScore(canvas)
 
 class GameOverMode(Mode):
+    def appStarted(mode):
+        mode.scores = [mode.player1.score,mode.player2.score,mode.player3.score,mode.player4.score]
+        mode.maxScore = max(mode.scores)
+        mode.winner = mode.scores.index(mode.maxScore)+1
+        
+        
     def redrawAll(mode,canvas):
-        canvas.create_text(mode.width/2,mode.height/2,text='Game Over!')
-
+        canvas.create_image(mode.width/2,mode.height/2,image=ImageTk.PhotoImage(f'player{mode.winner}win.png'))
+    
 class CookingRocket(ModalApp):
     def appStarted(app):
         app.splashScreenMode = SplashScreenMode()
