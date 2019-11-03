@@ -540,6 +540,7 @@ class GameMode(Mode):
         mode.player4 = Player(4,mode)
 
         #Order sheet
+        mode.order = Image.open('orderSheet.png')
         
         #score sheet
 
@@ -583,6 +584,11 @@ class GameMode(Mode):
         #mode.player2.drawPlayers(canvas)
         #mode.player3.drawPlayers(canvas)
         #mode.player4.drawPlayers(canvas)
+
+
+        #order sheet
+        canvas.create_image(160,200,image=ImageTk.PhotoImage(mode.order))
+        #score sheet
 
 
 class CookingRocket(ModalApp):
