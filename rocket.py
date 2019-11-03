@@ -6,11 +6,12 @@ import random
 import copy
 
 class Rocket(object):
-    orderedItems = ['wheels True', 'fuel tank True', 'engine True', \
-        'control panel True', 'shell True']
-    def __init__(self, mode):
+    orderedItems = []
+    def __init__(self, mode, customer):
         self.mode = mode
         self.items = []
+        self.customer = customer
+        Rocket.orderedItems = self.customer.order
 
     def addItem(self, part):
         tempList = copy.copy(self.items)
@@ -56,12 +57,13 @@ class Wheels(object):
          
     def draw(self, canvas):
         if 'wheels True' == self.player.inHand():
-            canvas.create_image(self.player.x, self.player.y,image=ImageTk.PhotoImage(self.wheel) )
+            canvas.create_image(self.player.x, self.player.y,image=ImageTk.PhotoImage(self.wheel))
+
 class FuelTank(object):
     def __init__(self,mode):
         self.mode = mode
         self.tankFilled = False
-        pass
+        self.tank = self.mode.scaleImage(self.mode.loadImage('tank.png'), 1/4)
     def __repr__(self):
         return f'fuel tank {self.tankFilled}'
     def fillTank(self):
@@ -70,12 +72,17 @@ class FuelTank(object):
         else:
             print('You already filled this tank')
     def draw(self, canvas):
-        pass
+        if 'fuel tank True' == self.player.inHand():
+            canvas.create_image(self.player.x, self.player.y,image=ImageTk.PhotoImage(self.tank))
+
 class Engine(object):
     def __init__(self, mode, engineNum):
         self.mode = mode
         self.engineNum = engineNum
         self.shape = None
+        
+    def __repr__(self):
+        return 'engine {self.shape}'
 
     def selectShape(self, shape):
         self.shape = shape
@@ -105,7 +112,15 @@ class Shell(object):
     def __init__(self, mode):
         self.mode = mode
         self.color = None
+    def __repr__(self):
+        return f'shell {self.color}'
+
     def selectColor(self, color):
         self.color = color
     def draw(self, canvas):
         pass
+
+class Customer(object):
+    def __init__(self):
+        self.order = ['wheels True', 'fuel tank True', 'engine triangle', \
+        'control panel True', 'shell red']
