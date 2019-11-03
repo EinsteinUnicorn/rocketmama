@@ -29,7 +29,7 @@ class Aliens(object):
 
 
 class Player(object):
-    def __init__(self, playerNum, mode):
+    def __init__(self, playerNum, xPos,yPos,mode):
         self.mode = mode
         self.playerNum = playerNum
         self.spriteList = []
@@ -41,8 +41,8 @@ class Player(object):
         self.score = 0
         self.orderList = ['wheels', 'fuel tank True', 'engine', 'control panel', 'shell']
         self.holding = []
-        self.x = mode.width//2
-        self.y = mode.height//2
+        self.x = xPos
+        self.y = yPos
         self.charW = 8
         self.charH = 10
         #self.items = set([Wheel,Engine,ControlPanel,Shell,FuelTank])
@@ -206,7 +206,7 @@ def pickDrop(player,event):
 #Tables
 class ReceiveTable(object):
     wid = 100
-    hei = 50
+    hei = 80
 
 class Trash(ReceiveTable):
     def __init__(self,xPos,yPos,mode):
@@ -214,7 +214,13 @@ class Trash(ReceiveTable):
         self.hei = super().hei
         self.x = xPos
         self.y = yPos
-    pass
+        image = Image.open('Trashcan.png')
+        self.image = mode.scaleImage(image,1/3)
+        
+        
+    def drawTrash(self,canvas):
+        canvas.create_image(self.x,self.y,image=ImageTk.PhotoImage(self.image))
+
 
 class MakerTable(ReceiveTable):
     def __init__(self,xPos,yPos,mode):
@@ -224,7 +230,7 @@ class MakerTable(ReceiveTable):
         self.y = yPos
         self.progress = []
         self.image = Image.open('makerTable.png')
-        self.image = mode.scaleImage(self.image,1/2)
+        self.image = mode.scaleImage(self.image,1/3)
         
     def drawMakerTable(self,canvas):
         canvas.create_image(self.x,self.y,image=ImageTk.PhotoImage(self.image))
@@ -304,7 +310,8 @@ class EngineTable(PickupTable):
 
     def drawEngineTable(self,canvas):
         canvas.create_image(self.x,self.y,image=ImageTk.PhotoImage(self.image))
-
+        
+    
 class ControlPanelTable(PickupTable):
     def __init__(self,xPos,yPos,rotated,mode):
         if rotated:
@@ -352,6 +359,42 @@ class ShellTable(PickupTable):
     def drawShellTable(self,canvas):
         canvas.create_image(self.x,self.y,image=ImageTk.PhotoImage(self.image))
 
+class FuelStation(object):
+    def __init__(self,xPos,yPos,mode):
+        self.x = xPos
+        self.y = yPos
+        self.wid = 100
+        self.hei = 80
+        self.image = Image.open('fuelStation.png')
+        self.image = mode.scaleImage(self.image,1/4)
+
+    def drawFuelStation(self,canvas):
+        canvas.create_image(self.x,self.y,image=ImageTk.PhotoImage(self.image))
+
+
+class ColorStation(object):
+    def __init__(self,xPos,yPos,mode):
+        self.x = xPos
+        self.y = yPos
+        self.wid = 100
+        self.hei = 80
+        self.image = Image.open('colorStation.png')
+        self.image = mode.scaleImage(self.image,1/4)
+
+    def drawColorStation(self,canvas):
+        canvas.create_image(self.x,self.y,image=ImageTk.PhotoImage(self.image))
+
+class WireStation(object):
+    def __init__(self,xPos,yPos,mode):
+        self.x = xPos
+        self.y = yPos
+        self.wid = 100
+        self.hei = 80
+        self.image = Image.open('wireStation.png')
+        self.image = mode.scaleImage(self.image,1/4)
+
+    def drawWireStation(self,canvas):
+        canvas.create_image(self.x,self.y,image=ImageTk.PhotoImage(self.image))
 
 class Table(object):
     allTableTypes = set([WheelTable,FuelTankTable,EngineTable,
@@ -429,9 +472,9 @@ class FuelTank(object):
     def draw(self, canvas):
         pass
 class Engine(object):
-    def __init__(self, mode, engineNum):
+    def __init__(self, mode):
         self.mode = mode
-        self.engineNum = engineNum
+        #self.engineNum = engineNum
         self.shape = None
 
     def selectShape(self, shape):
@@ -447,6 +490,8 @@ class Engine(object):
         elif self.shape == 'square':
             #draw a square
             pass
+
+    
 
 class ControlPanel(object):
     def __init__(self, mode):
@@ -530,20 +575,47 @@ class GameMode(Mode):
         Table.addTable(Table,mode.controlPanelTable)
         mode.fuelTankTable = FuelTankTable(1120,700,True,mode)
         Table.addTable(Table,mode.fuelTankTable)
+        mode.engineTable = EngineTable(800,160,False,mode)
+        Table.addTable(Table,mode.engineTable)
+        mode.shellTable = ShellTable(1120,300,True,mode)
+        Table.addTable(Table,mode.shellTable)
         
-        mode.makerTable = MakerTable(mode.width/2-50,mode.height/2-25,mode)
+
+        mode.trash1 = Trash(350,800,mode)
+        Table.addTable(Table,mode.trash1)
+        mode.trash2 = Trash(980,800,mode)
+        Table.addTable(Table,mode.trash2)
+
+        mode.fuelStation = FuelStation(500,800,mode)
+        Table.addTable(Table,mode.fuelStation)
+            
+        mode.colorStation = ColorStation(670,800,mode)
+        Table.addTable(Table,mode.colorStation)
+        
+        mode.wireStation = WireStation(840,800,mode)
+        Table.addTable(Table,mode.wireStation)
+        
+        mode.makerTable1 = MakerTable(560,405,mode)
+        Table.addTable(Table,mode.makerTable1)
+        mode.makerTable2 = MakerTable(740,405,mode)
+        Table.addTable(Table,mode.makerTable2)
+        mode.makerTable3 = MakerTable(560,515,mode)
+        Table.addTable(Table,mode.makerTable3)
+        mode.makerTable4 = MakerTable(740,515,mode)
+        Table.addTable(Table,mode.makerTable4)
 
         #players
-        mode.player1 = Player(1,mode)
-        mode.player2 = Player(2,mode)
-        mode.player3 = Player(3,mode)
-        mode.player4 = Player(4,mode)
+        mode.player1 = Player(1,560,300,mode)
+        mode.player2 = Player(2,740,300,mode)
+        mode.player3 = Player(3,560,560,mode)
+        mode.player4 = Player(4,740,560,mode)
 
         #Order sheet
         mode.order = Image.open('orderSheet.png')
         
         #score sheet
-
+        mode.score = Image.open('scoreSheet.png')
+        mode.score = mode.scaleImage(mode.score,1/2)
         
     def timerFired(mode):
         mode.spriteCount += 1
@@ -577,19 +649,35 @@ class GameMode(Mode):
         mode.wheelTable.drawWheelTable(canvas)
         mode.controlPanelTable.drawControlPanelTable(canvas)
         mode.fuelTankTable.drawFuelTankTable(canvas)
+        mode.shellTable.drawShellTable(canvas)
+        mode.engineTable.drawEngineTable(canvas)
+
+        mode.trash1.drawTrash(canvas)
+        mode.trash2.drawTrash(canvas)
+
+        mode.fuelStation.drawFuelStation(canvas)
+
+        mode.colorStation.drawColorStation(canvas)
+
+        mode.wireStation.drawWireStation(canvas)
+
+        mode.makerTable1.drawMakerTable(canvas)
+        mode.makerTable2.drawMakerTable(canvas)
+        mode.makerTable3.drawMakerTable(canvas)
+        mode.makerTable4.drawMakerTable(canvas)
         
         
         #players
         mode.player1.drawPlayers(canvas)
-        #mode.player2.drawPlayers(canvas)
-        #mode.player3.drawPlayers(canvas)
-        #mode.player4.drawPlayers(canvas)
+        mode.player2.drawPlayers(canvas)
+        mode.player3.drawPlayers(canvas)
+        mode.player4.drawPlayers(canvas)
 
 
         #order sheet
         canvas.create_image(160,200,image=ImageTk.PhotoImage(mode.order))
         #score sheet
-
+        canvas.create_image(130,440,image=ImageTk.PhotoImage(mode.score))
 
 class CookingRocket(ModalApp):
     def appStarted(app):
