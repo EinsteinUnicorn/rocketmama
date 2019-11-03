@@ -195,7 +195,7 @@ class Player(object):
             d >= (table.y - table.h)):
             return True
 
-
+#Tables
 class ReceiveTable(object):
     def __init__(self,xPos,yPos,wid,hei):
         self.x = xPos
@@ -210,6 +210,27 @@ class MakerTable(ReceiveTable):
     def __init__(self,xPos,yPos,wid,hei):
         super().__init__(x,y,wid,hei)
         self.progress = []
+
+
+class PickupTable(object):
+    def __init__(self,xPos,yPos,wid,hei):
+        self.x = xPos
+        self.y = yPos
+        self.wid = wid
+        self.hei = hei
+
+class WheelTable(PickupTable):
+    def __init__(self,xPos,yPos,wid,hei,):
+class FuelTankTable(PickupTable):
+
+class EngineTable(PickupTable):
+
+class ControlPanelTable(PickupTable):
+
+class ShellTable(PickupTable):
+        
+
+    
 
 
 #MAKING
