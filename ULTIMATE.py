@@ -214,7 +214,13 @@ class Trash(ReceiveTable):
         self.hei = super().hei
         self.x = xPos
         self.y = yPos
-    pass
+        image = Image.open('Trashcan.png')
+        self.image = mode.scaleImage(image,1/3)
+        
+        
+    def drawTrash(self,canvas):
+        canvas.create_image(self.x,self.y,image=ImageTk.PhotoImage(self.image))
+
 
 class MakerTable(ReceiveTable):
     def __init__(self,xPos,yPos,mode):
@@ -352,6 +358,36 @@ class ShellTable(PickupTable):
     def drawShellTable(self,canvas):
         canvas.create_image(self.x,self.y,image=ImageTk.PhotoImage(self.image))
 
+class FuelStation(object):
+    def __init__(self,xPos,yPos,mode):
+        self.x = xPos
+        self.y = yPos
+        self.image = Image.open('fuelStation.png')
+        self.image = mode.scaleImage(self.image,1/4)
+
+    def drawFuelStation(self,canvas):
+        canvas.create_image(self.x,self.y,image=ImageTk.PhotoImage(self.image))
+
+
+class ColorStation(object):
+    def __init__(self,xPos,yPos,mode):
+        self.x = xPos
+        self.y = yPos
+        self.image = Image.open('colorStation.png')
+        self.image = mode.scaleImage(self.image,1/4)
+
+    def drawColorStation(self,canvas):
+        canvas.create_image(self.x,self.y,image=ImageTk.PhotoImage(self.image))
+
+class WireStation(object):
+    def __init__(self,xPos,yPos,mode):
+        self.x = xPos
+        self.y = yPos
+        self.image = Image.open('wireStation.png')
+        self.image = mode.scaleImage(self.image,1/4)
+
+    def drawWireStation(self,canvas):
+        canvas.create_image(self.x,self.y,image=ImageTk.PhotoImage(self.image))
 
 class Table(object):
     allTableTypes = set([WheelTable,FuelTankTable,EngineTable,
@@ -517,7 +553,7 @@ class GameMode(Mode):
                 mode.floor[row][col] = mode.tile
         
         #aliens
-        mode.alien1 = Aliens(1,100,600,mode)
+        mode.alien1 = Aliens(1,90,700,mode)
         mode.alien2 = Aliens(2,400,80,mode)
         mode.alien3 = Aliens(3,800,80,mode)
         mode.alien4 = Aliens(4,1200,300,mode)
@@ -526,10 +562,24 @@ class GameMode(Mode):
         #tables
         mode.wheelTable = WheelTable(400,160,False,mode)
         Table.addTable(Table,mode.wheelTable)
-        mode.controlPanelTable = ControlPanelTable(180,610,True,mode)
+        mode.controlPanelTable = ControlPanelTable(180,710,True,mode)
         Table.addTable(Table,mode.controlPanelTable)
         mode.fuelTankTable = FuelTankTable(1120,700,True,mode)
         Table.addTable(Table,mode.fuelTankTable)
+
+        mode.trash1 = Trash(350,800,mode)
+        Table.addTable(Table,mode.trash1)
+        mode.trash2 = Trash(980,800,mode)
+        Table.addTable(Table,mode.trash2)
+
+        mode.fuelStation = FuelStation(500,800,mode)
+        Table.addTable(Table,mode.fuelStation)
+            
+        mode.colorStation = ColorStation(670,800,mode)
+        Table.addTable(Table,mode.colorStation)
+        
+        mode.wireStation = WireStation(840,800,mode)
+        Table.addTable(Table,mode.wireStation)
         
         mode.makerTable = MakerTable(mode.width/2-50,mode.height/2-25,mode)
 
@@ -543,7 +593,8 @@ class GameMode(Mode):
         mode.order = Image.open('orderSheet.png')
         
         #score sheet
-
+        mode.score = Image.open('scoreSheet.png')
+        mode.score = mode.scaleImage(mode.score,1/2)
         
     def timerFired(mode):
         mode.spriteCount += 1
@@ -577,6 +628,17 @@ class GameMode(Mode):
         mode.wheelTable.drawWheelTable(canvas)
         mode.controlPanelTable.drawControlPanelTable(canvas)
         mode.fuelTankTable.drawFuelTankTable(canvas)
+
+        mode.trash1.drawTrash(canvas)
+        mode.trash2.drawTrash(canvas)
+
+        mode.fuelStation.drawFuelStation(canvas)
+
+        mode.colorStation.drawColorStation(canvas)
+
+        mode.wireStation.drawWireStation(canvas)
+
+        
         
         
         #players
@@ -589,7 +651,7 @@ class GameMode(Mode):
         #order sheet
         canvas.create_image(160,200,image=ImageTk.PhotoImage(mode.order))
         #score sheet
-
+        canvas.create_image(130,440,image=ImageTk.PhotoImage(mode.score))
 
 class CookingRocket(ModalApp):
     def appStarted(app):
