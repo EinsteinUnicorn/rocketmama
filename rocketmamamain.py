@@ -27,18 +27,15 @@ class GameMode(Mode):
         #players
         mode.player1 = Player(1,mode)
         
-        #items -- This is a test
+        #items
         mode.wheel = Wheels(mode, mode.player1)
-        mode.wheel.getWheel()
-        mode.player1.addItem(mode.wheel)
-
+        mode.fuel = FuelTank(mode, mode.player1)
+        mode.engine = Engine(mode, mode.player1)
+        mode.controlPanel = ControlPanel(mode, mode.player1)
+        mode.shell = Shell(mode, mode.player1)
         
     def timerFired(mode):
         mode.spriteCount += 1
-    
-    def drawBackground(mode):
-        tileWidth = 60
-        pass
 
     def redrawAll(mode,canvas):
         mode.alien1.drawAlienWorker(canvas)
@@ -48,8 +45,13 @@ class GameMode(Mode):
         mode.alien5.drawAlienWorker(canvas)
         
         mode.player1.drawPlayers(canvas)
-        mode.wheel.draw(canvas)
 
+        if mode.player1.amtOfItems() > 0:
+            mode.wheel.draw(canvas)
+            #mode.fuel.draw(canvas)
+            mode.engine.draw(canvas)
+            mode.controlPanel.draw(canvas)
+            mode.shell.draw(canvas)
 
 class CookingRocket(ModalApp):
     def appStarted(app):
