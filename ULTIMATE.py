@@ -44,7 +44,7 @@ class Player(object):
         self.x = mode.width//2
         self.y = mode.height//2
         self.charW = 8
-        self.charH = 12
+        self.charH = 10
         #self.items = set([Wheel,Engine,ControlPanel,Shell,FuelTank])
         table = Table()
         self.tables = table.allTables
@@ -145,27 +145,6 @@ class Player(object):
             return True
         else:
             return False
-        
-
-    def pickDrop(self,event):
-        for table in self.tables:
-            if (event.key == 'd' and tableInFront(table) and\
-                len(self.holding)>0) and (isinstance(table,ReceiveTable)):
-                item = self.holding.pop
-                if isinstance(table,MakerTable) and\
-                    self.orderList[len(makerTable1.progress)]==str(item):
-                    makerTable1.progress.append(item)
-                    print("dropped")
-                elif isinstance(table,MakerTable):
-                    self.holding.append(item)
-                    print("Can't drop here!")
-                        
-                
-            elif (event.key == 'e' and tableInFront(table) and\
-                (isinstance(table,PickupTable) and len(self.holding)<2)):
-                self.holding.append(self.table.item)
-                print("picked up")
-            
             
     def tableInFront(self,table):
         a = self.x - self.charW
@@ -197,6 +176,32 @@ class Player(object):
             (c <= (table.y - table.hei) and\
             d >= (table.y - table.hei)):
             return True
+        return False
+
+def pickDrop(player,event):
+    for table in Table().allTables:
+        if (event.key == 'd'):
+            print('d pressed')
+            print(Player.tableInFront(player,table))
+            print(player.lastKey)
+            if Player.tableInFront(player,table) and\
+                len(player.holding)>0 and (isinstance(table,ReceiveTable)):
+                item = player.holding.pop
+                if isinstance(table,MakerTable) and\
+                    player.orderList[len(makerTable1.progress)]==str(item):
+                    makerTable1.progress.append(item)
+                    print("dropped")
+                elif isinstance(table,MakerTable):
+                    player.holding.append(item)
+                    print("Can't drop here!")
+                        
+        elif (event.key == 'e'):
+            print('e pressed')
+            if Player.tableInFront(player,table) and\
+                (isinstance(table,PickupTable) and len(player.holding)<2):
+                player.holding.append(player.table.item)
+                print("picked up")
+
 
 #Tables
 class ReceiveTable(object):
@@ -240,6 +245,9 @@ class WheelTable(PickupTable):
         image = Image.open('wheelTable.png')
         self.image = mode.scaleImage(image,1/3)
 
+    def __repr__(self):
+        return 'WheelTable'
+
     def drawWheelTable(self,canvas):
         canvas.create_image(self.x,self.y,image=ImageTk.PhotoImage(self.image))
 
@@ -250,8 +258,15 @@ class FuelTankTable(PickupTable):
         self.hei = super().hei
         self.rotated = rotated
         self.item = FuelTank(mode)
-        sprite = Image.open('fuelTankTable.png')
-        self.sprite = mode.scaleImage(sprite,1/2)
+        image = Image.open('fuelTankTable.png')
+        self.image = mode.scaleImage(sprite,1/2)
+
+    def __repr__(self):
+        return 'FuelTank'
+
+    def drawFuelTankTable(self,canvas):
+        canvas.create_image(self.x,self.y,image=ImageTk.PhotoImage(self.image))
+
         
 class EngineTable(PickupTable):
     def __init__(self,xPos,yPos,rotated,item,mode):
@@ -259,8 +274,14 @@ class EngineTable(PickupTable):
         self.hei = super().hei
         self.rotated = rotated
         self.item = Engine(mode)
-        sprite = Image.open('engineTable.png')
-        self.sprite = mode.scaleImage(sprite,1/2)
+        image = Image.open('engineTable.png')
+        self.image = mode.scaleImage(sprite,1/2)
+
+    def __repr__(self):
+        return 'Engine'
+
+    def drawEngineTable(self,canvas):
+        canvas.create_image(self.x,self.y,image=ImageTk.PhotoImage(self.image))
 
 class ControlPanelTable(PickupTable):
     def __init__(self,xPos,yPos,rotated,item,mode):
@@ -268,8 +289,15 @@ class ControlPanelTable(PickupTable):
         self.hei = super().hei
         self.rotated = rotated
         self.item = ControlPanel(mode)
-        sprite = Image.open('controlPanelTable.png')
-        self.sprite = mode.scaleImage(sprite,1/2)
+        image = Image.open('controlPanelTable.png')
+        self.image = mode.scaleImage(sprite,1/2)
+
+    def __repr__(self):
+        return 'ControlPanel'
+
+    def drawControlPanelTable(self,canvas):
+        canvas.create_image(self.x,self.y,image=ImageTk.PhotoImage(self.image))
+
 
 class ShellTable(PickupTable):
     def __init__(self,xPos,yPos,rotated,item,mode):
@@ -277,8 +305,15 @@ class ShellTable(PickupTable):
         self.hei = super().hei
         self.rotated = rotated
         self.item = Shell(mode)
-        sprite = Image.open('shellTable.png')
-        self.sprite = mode.scaleImage(sprite,1/2)
+        image = Image.open('shellTable.png')
+        self.image = mode.scaleImage(sprite,1/2)
+
+    def __repr__(self):
+        return 'Shell'
+
+    def drawShellTable(self,canvas):
+        canvas.create_image(self.x,self.y,image=ImageTk.PhotoImage(self.image))
+
 
 class Table(object):
     allTableTypes = set([WheelTable,FuelTankTable,EngineTable,
@@ -286,7 +321,10 @@ class Table(object):
     allTables = set()
 
     def addTable(self,table):
-        self.allTables.add(table)
+        Table.allTables.add(table)
+
+    def __repr__(self):
+        return Table.allTables
 
         
 
@@ -392,8 +430,28 @@ class Shell(object):
         pass
 
     
+#other helper fx:
+#from http://www.cs.cmu.edu/~112/notes/notes-animations-part2.html#cachingPhotoImages
+#CachingPhotoImage for increased speed section   
+def make2dList(rows, cols):
+    return [ ([0] * cols) for row in range(rows) ]
 
+def getCachedPhotoImage(image):
+    if ('cachedPhotoImage' not in image.__dict__):
+        image.cachedPhotoImage = ImageTk.PhotoImage(image)
+    return image.cachedPhotoImage
 
+# from www.cs.cmu.edu/~112/notes/notes-animations-part1.html#exampleGrids
+def getCellBounds(mode, row, col):
+    gridWidth  = mode.width - 2*mode.margin
+    gridHeight = mode.height - 2*mode.margin
+    columnWidth = gridWidth / mode.cols
+    rowHeight = gridHeight / mode.rows
+    x0 = mode.margin + col * columnWidth
+    x1 = mode.margin + (col+1) * columnWidth
+    y0 = mode.margin + row * rowHeight
+    y1 = mode.margin + (row+1) * rowHeight
+    return (x0, y0, x1, y1)
 
 
 #ModalApp
@@ -408,7 +466,18 @@ class SplashScreenMode(Mode):
 class GameMode(Mode):
     def appStarted(mode):
         mode.spriteCount = 0
+        mode.margin = 5
         PickupTable()
+        #floor
+        mode.rows,mode.cols = 15,22
+        mode.floor = make2dList(mode.rows,mode.cols)
+        tile = Image.open('tile.png')
+        mode.tile = mode.scaleImage(tile,1/4)
+
+        for row in range(mode.rows):
+            for col in range(mode.cols):
+                mode.floor[row][col] = mode.tile
+        
         #aliens
         mode.alien1 = Aliens(1,100,600,mode)
         mode.alien2 = Aliens(2,400,80,mode)
@@ -419,6 +488,7 @@ class GameMode(Mode):
         #tables
         mode.wheelTable = WheelTable(400,160,False,mode)
         Table.addTable(Table,mode.wheelTable)
+        
         mode.makerTable = MakerTable(mode.width/2-50,mode.height/2-25,mode)
 
         #players
@@ -433,20 +503,33 @@ class GameMode(Mode):
 
     def keyPressed(mode,event):
         Player.move(mode.player1,event)
-        Player.pickDrop(mode.player1,event)
+        pickDrop(mode.player1,event)
         Player.move(mode.player2,event)
         Player.move(mode.player3,event)
         Player.move(mode.player4,event)
+        
 
     def redrawAll(mode,canvas):
+        #floor
+        for row in range(mode.rows):
+            for col in range(mode.cols):
+                (x0, y0, x1, y1) = getCellBounds(mode,row, col)
+                cx, cy = (x0 + x1)/2, (y0 + y1)/2
+                tile = mode.floor[row][col]
+                photoImage = getCachedPhotoImage(tile)
+                canvas.create_image(cx,cy,image=photoImage)
+        
+        #workers
         mode.alien1.drawAlienWorker(canvas)
         mode.alien2.drawAlienWorker(canvas)
         mode.alien3.drawAlienWorker(canvas)
         mode.alien4.drawAlienWorker(canvas)
         mode.alien5.drawAlienWorker(canvas)
 
+        #tables
         mode.wheelTable.drawWheelTable(canvas)
-
+        
+        #players
         mode.player1.drawPlayers(canvas)
         #mode.player2.drawPlayers(canvas)
         #mode.player3.drawPlayers(canvas)
